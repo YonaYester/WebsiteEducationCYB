@@ -1,0 +1,103 @@
+<html>
+  <body>
+    <a href="index.html">Home </a>
+    <h1>Advanced Encryption Standard</h1>
+    <br>    
+
+    <p>The Advanced Encryption Standard, commonly known as AES, stands as a pivotal encryption algorithm, widely recognized for its role in securing sensitive digital information. Developed by the National Institute of Standards and Technology (NIST), AES was established to replace the older DES (Data Encryption Standard) with a more robust and versatile framework for cryptography. It is imperative in the landscape of digital security, safeguarding data across various platforms, from financial transactions to classified government communications.
+    </p>
+
+    <h2>The Basics </h2>
+    <ol> 
+      <li>You start with a secret key (like a password).
+AES stretches this key into several smaller round keys (like different versions of your password).</li>
+      <li>Every tiny piece of your data (called a byte) is swapped for a different byte. Think of it like replacing every letter in a word with a different letter from a secret alphabet.</li>
+      <li>AES takes your data and arranges it in a grid (like a small table).
+The rows of this grid are shifted to the left. </li>
+      <li>AES then mixes up the columns of the grid using some math. </li>
+      <li>One of the round keys (from Step 1) is mixed with the data using XOR (a special type of combination). </li>
+      <li>After repeating these steps multiple times, the final scrambled data is called ciphertext. </li>
+    </ol>
+
+    <h1>Drag and Drop AES Encryption Demo</h1>
+
+<p>Drag the text below into the encryption box to see a simulated AES transformation.</p>
+
+<div class="container">
+    <div id="dragText" class="draggable" draggable="true">Hello, AES!</div>
+    <div id="dropZone" class="box">Drop Here to Encrypt</div>
+</div>
+
+<div id="output"></div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f4;
+    }
+    h1 {
+        color: #333;
+    }
+    .container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 50px;
+    }
+    .box {
+        width: 250px;
+        height: 150px;
+        border: 2px dashed #333;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        padding: 10px;
+    }
+    .draggable {
+        padding: 10px;
+        background-color: #3498db;
+        color: white;
+        cursor: grab;
+        border-radius: 5px;
+    }
+    #output {
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #27ae60;
+    }
+</style>
+
+<script>
+    const dragText = document.getElementById("dragText");
+    const dropZone = document.getElementById("dropZone");
+    const output = document.getElementById("output");
+
+    // Handle drag start
+    dragText.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text", e.target.innerText);
+    });
+
+    // Prevent default drag-over behavior
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+    });
+
+    // Handle drop event
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        let plaintext = e.dataTransfer.getData("text");
+
+        // Simulate AES encryption (Basic example: converting to Base64)
+        let encryptedText = btoa(plaintext); 
+
+        output.innerHTML = `<p><strong>Encrypted Text:</strong> ${encryptedText}</p>`;
+    });
+</script>
+
+  </body>
+
+</html>
