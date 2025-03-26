@@ -1,0 +1,94 @@
+//create sql db
+CREATE DATABASE contact_us_db;
+
+//create table
+CREATE TABLE contact_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+//html contact form
+//format
+<section id="contact" class="tm-section-pad-top">
+    <div class="container">
+        <h2 class="text-center tm-section-title">Contact Us</h2> //heading & intro
+        <p class="text-center">Feel free to fill out the form below with any questions or concerns and we’ll get back to you as soon as possible.</p>
+
+        <form id="contactForm" action="process_form.php" method="POST"> //creating form
+            <div class="row"> //nme input 
+                <div class="col-md-6">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name:" required />
+                </div>
+
+                <div class="col-md-6"> //email input 
+                    <label for="email">Your Email</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email:" required />
+                </div>
+            </div>
+
+            <div class="row"> //message input
+                <div class="col-md-12">
+                    <label for="message">Your Message</label>
+                    <textarea id="message" name="message" class="form-control" rows="5" placeholder="Enter your message" required></textarea>
+                </div>
+            </div>
+
+            <div class="text-center"> //submit button
+                <button type="submit" class="btn btn-primary mt-4">Send Message</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+//PHP Script to Process Form and Save Data to Database
+<?php
+
+//establish connection
+$servername = "localhost"; 
+$username = "root"; 
+$password = ""; 
+$dbname = "contact_us_db"; 
+
+//create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+//check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+//check data
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    //collect & sanitize
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $message = trim($_POST['message']);
+
+//validate
+    if (empty($name) || empty($email) || empty($message)) {
+        die("All fields are required.");
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        die("Invalid email format.");
+    }
+
+ //prevent SQL injection
+    $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)"); //placeholders
+    $stmt->bind_param("sss", $name, $email, $message); //bind
+
+    //execute & check 
+    if ($stmt->execute()) {
+        echo "Thank you! We will get back to you as soon as possible.";
+    } else {
+        echo "Error. Please try again later.";
+    }
+
+    //close
+    $stmt->close();
+}
+
