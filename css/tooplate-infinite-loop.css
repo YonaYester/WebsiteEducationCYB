@@ -227,18 +227,14 @@ blockquote {
 }
 
 .tm-down-arrow {
-  	color: #FFF;
-    cursor: pointer;
-    background: #357;
     padding: 15px 40px;
     transition: all 0.3s ease;
+    width: 150px; 
 }
 
 .tm-down-arrow:hover,
 .tm-down-arrow:focus {
-  color: #FFF;
-  background: #37A;
-  padding: 20px 50px;
+  padding: 20px 51px;
 }
 
 /* Introduction */
@@ -696,4 +692,15 @@ p {
   .tm-gallery-item {
     margin: 0;
   }
+
+/* tooplate-infinite-loop.css */
+
+.tm-down-arrow {
+  width: 40px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+
 }
