@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>DSA Public/Private Key Demo - With Code Image</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f4;
+        padding: 20px;
+        margin: 0;
+      }
+      h1, h2 {
+        color: #333;
+      }
+      .section {
+        margin: 30px auto;
+        padding: 20px;
+        width: 80%;
+        max-width: 600px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      textarea, input[type="text"] {
+        width: 90%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      input[readonly] {
+        background-color: #e9e9e9;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #3498db;
+        color: white;
+        border-radius: 5px;
+        margin: 5px;
+      }
+      .buttonGroup {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+      #revealOutput p {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      /* Fade-in animation for the DSA math section */
+      #dsaMath {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.6s ease-in-out;
+      }
+      #dsaMath.showSection {
+        display: block;
+        opacity: 1;
+      }
+      /* Style for the code image */
+      #dsaMath img {
+        max-width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      /* Style for the Back to Home button */
+      #homeButton {
+        background-color: #2ecc71;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Back to Home Button -->
+    <a href="index.html" style="text-decoration: none;">
+      <button id="homeButton">Back to Home</button>
+    </a>
+
+    <h1>DSA Public/Private Key Demo </h1>
+
+    <!-- Signing Section -->
+    <div class="section">
+      <h2>1. Sign Your Message</h2>
+      <p>
+        Enter your message below and click "Sign" to generate a simulated hash.
+      </p>
+      <textarea id="inputText" placeholder="Enter your message here"></textarea>
+      <br>
+      <button id="signButton">Sign</button>
+      <br><br>
+      <p><strong>Simulated Hash Output:</strong></p>
+      <div class="buttonGroup">
+        <input type="text" id="encryptedText" readonly placeholder="Your hash will appear here">
+        <button id="copyButton">Copy</button>
+      </div>
+    </div>
+
+    <!-- Verification Section -->
+    <div class="section">
+      <h2>2. Verify to Reveal Original Message</h2>
+      <p>
+        Enter the correct hash to reveal the original text. Press Enter in the input to verify.
+      </p>
+      <div class="buttonGroup">
+        <input type="text" id="hashInput" placeholder="Enter hash here">
+        <button id="pasteButton">Paste</button>
+      </div>
+      <button id="verifyButton">Verify</button>
+      <div id="revealOutput"></div>
+    </div>
+
+    <!-- Mathematical Algorithm Section (with Code Image) -->
+    <div id="dsaMath" class="section">
+      <h2>How did this happen? 🤔</h2>
+      <p>
+        The Digital Signature Algorithm (DSA) uses mathematical principles to generate a unique signature for a message.
+        Below is an image of a simplified version of the algorithm and sample code:
+      </p>
+      <img src="img/carbon.png" alt="DSA Code Example">
+      <h3 style="text-align: left; margin-top: 20px;">What Each Part of the Code Does (in Simple Terms):</h3>
+      <ol style="text-align: left; margin: 1em 0; line-height: 1.6;">
+        <li>
+          <strong>import random, hashlib</strong>: Brings in tools for random number generation and hashing (SHA-256).
+        </li>
+        <li>
+          <strong>p, q, g</strong> are special domain parameters:
+          <ul style="margin-left: 1.5em;">
+            <li><strong>p</strong> is a large prime.</li>
+            <li><strong>q</strong> is a prime that divides (p - 1).</li>
+            <li><strong>g</strong> helps generate unique values in the group.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>x</strong> is the private key, chosen randomly between 1 and (q - 1).
+        </li>
+        <li>
+          <strong>y</strong> is the public key, computed as <code>g^x mod p</code>.
+        </li>
+        <li>
+          <strong>dsa_sign(message)</strong> is the function that creates the signature:
+          <ul style="margin-left: 1.5em;">
+            <li>We turn the message into a number by hashing it with SHA-256 (<code>hash_val</code>).</li>
+            <li>We pick a new random <strong>k</strong> for every signature to keep it unique.</li>
+            <li><strong>r</strong> = (<code>g^k mod p</code>) mod q. If <code>r</code> is 0, we pick a new k.</li>
+            <li><strong>k_inv</strong> is the modular inverse of k, which allows us to do division in modulo math.</li>
+            <li><strong>s</strong> = (<code>k_inv</code> * (<code>hash_val + x * r</code>)) mod q. If <code>s</code> is 0, we pick a new k again.</li>
+            <li>The function returns the signature pair (<code>r, s</code>).</li>
+          </ul>
+        </li>
+      </ol>
+      <p style="text-align: left; line-height: 1.6;">
+        <strong>DSA is best suited for:</strong> situations where we need to verify a message’s authenticity
+        and ensure it hasn’t been changed—like secure communications or software signing.
+      </p>
+    </div>
+
+    <script>
+      let storedHash = "";
+      let originalMessage = "";
+
+      // SIGN BUTTON: Generate the simulated hash
+      document.getElementById("signButton").addEventListener("click", function() {
+        originalMessage = document.getElementById("inputText").value.trim();
+        if (originalMessage === "") {
+          document.getElementById("encryptedText").value = "Please enter a message.";
+          return;
+        }
+        // Simulate hashing using Base64 encoding
+        storedHash = btoa(originalMessage);
+        // Display the Base64 hash in the read-only field
+        document.getElementById("encryptedText").value = storedHash;
+        // Clear any previous verification output
+        document.getElementById("revealOutput").innerHTML = "";
+      });
+
+      // Trigger Sign on Enter key in the message text area
+      document.getElementById("inputText").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("signButton").click();
+        }
+      });
+
+      // COPY BUTTON: Copy the hash to the clipboard (no popup)
+      document.getElementById("copyButton").addEventListener("click", function() {
+        const hashText = document.getElementById("encryptedText").value;
+        if (hashText && hashText !== "Please enter a message.") {
+          navigator.clipboard.writeText(hashText)
+            .then(() => console.log("Hash copied to clipboard!"))
+            .catch((err) => console.error("Failed to copy: " + err));
+        }
+      });
+
+      // PASTE BUTTON: Attempt to read from the clipboard directly
+      document.getElementById("pasteButton").addEventListener("click", async function() {
+        try {
+          const clipboardText = await navigator.clipboard.readText();
+          document.getElementById("hashInput").value = clipboardText;
+        } catch (err) {
+          console.error("Failed to read clipboard contents: " + err);
+        }
+      });
+
+      // Trigger Verify on Enter key in the verification input
+      document.getElementById("hashInput").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("verifyButton").click();
+        }
+      });
+
+      // VERIFY BUTTON: Compare user input to the stored hash and reveal the DSA math section if correct
+      document.getElementById("verifyButton").addEventListener("click", function() {
+        const userInput = document.getElementById("hashInput").value.trim();
+        if (userInput === storedHash) {
+          document.getElementById("revealOutput").innerHTML = `<p>Original Message: ${originalMessage}</p>`;
+          // Show the "How did this happen?" section with a fade-in
+          const dsaMath = document.getElementById("dsaMath");
+          dsaMath.classList.add("showSection");
+          // Smooth scroll to the DSA math section
+          dsaMath.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          document.getElementById("revealOutput").innerHTML = `<p style="color:red;">Incorrect hash. Unable to reveal message.</p>`;
+        }
+      });
+    </script>
+  </body>
+</html>
