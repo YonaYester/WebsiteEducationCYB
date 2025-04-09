@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ElGamal Encryption Simulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+      margin: 0;
+    }
+    /* Header style with the Home button */
+    #header {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    #homeButton {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    h1 {
+      margin: 0;
+      padding: 10px 0;
+      color: #333;
+    }
+    .section {
+      background: #fff;
+      max-width: 600px;
+      margin: 0 auto 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .ciphertext {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+    .slider-container {
+      margin: 20px 0;
+    }
+    input[type="range"] {
+      width: 80%;
+      margin: 10px;
+    }
+    .result {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background: #3498db;
+      color: white;
+      border-radius: 5px;
+      margin: 10px;
+    }
+    #revealButton {
+      display: none;
+      background: #2ecc71;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Home button -->
+  <div id="header">
+    <a id="homeButton" href="index.html">Home</a>
+    <h1>ElGamal Encryption Simulator</h1>
+  </div>
+  
+  <div class="section">
+    <p><strong>Ciphertext:</strong> c₁ = 10, c₂ = 19</p>
+    <p>Use the slider below to choose the ephemeral key (y) used in the encryption process.</p>
+    
+    <div class="slider-container">
+      <input type="range" id="ephemeralSlider" min="1" max="10" value="1">
+      <p>Your selected ephemeral key: <span id="selectedKey">1</span></p>
+      <p>Computed c₁ = <span id="computedC1">5</span></p>
+    </div>
+    
+    <button id="revealButton">Reveal Decrypted Message</button>
+    <div class="result" id="resultMessage"></div>
+    
+    <p style="margin-top: 20px;">
+      <em>
+      ElGamal encryption picks a random ephemeral key (y) to generate the ciphertext. Here, c₁ is computed as 5ʸ mod 23.  
+      Try to set the correct y so that c₁ becomes 10.
+      </em>
+    </p>
+  </div>
+  
+  <script>
+    // Simulation parameters.
+    const p = 23;
+    const g = 5;
+    const targetC1 = 10;  // given ciphertext value c1.
+    const correctEphemeral = 3;  // correct ephemeral key (y) for demo
+    const decryptedMessage = "7";  // Decrypted message to be revealed.
+
+    const slider = document.getElementById('ephemeralSlider');
+    const selectedKeySpan = document.getElementById('selectedKey');
+    const computedC1Span = document.getElementById('computedC1');
+    const revealButton = document.getElementById('revealButton');
+    const resultMessageDiv = document.getElementById('resultMessage');
+
+    // Compute g^y mod p using a simple loop.
+    function modExp(base, exponent, modulus) {
+      let result = 1;
+      for (let i = 0; i < exponent; i++) {
+        result = (result * base) % modulus;
+      }
+      return result;
+    }
+
+    // Update computed c1 when slider value changes.
+    slider.addEventListener('input', function() {
+      const y = parseInt(this.value);
+      selectedKeySpan.textContent = y;
+      const computedC1 = modExp(g, y, p);
+      computedC1Span.textContent = computedC1;
+      // Show the reveal button if computed c1 matches target.
+      if (computedC1 === targetC1) {
+        revealButton.style.display = 'inline-block';
+      } else {
+        revealButton.style.display = 'none';
+        resultMessageDiv.textContent = '';
+      }
+    });
+
+    // When the reveal button is clicked, display the decrypted message and explanation.
+    revealButton.addEventListener('click', function() {
+      resultMessageDiv.innerHTML =
+        '<strong>Decrypted Message:</strong> ' + decryptedMessage + '<br><br>' +
+        '<strong>Explanation:</strong><br>' +
+        'ElGamal encryption uses a random ephemeral key (y) for each encryption. Here, c₁ is computed as gʸ mod p. ' +
+        'For this demo, when y = ' + correctEphemeral + ', c₁ becomes 10, matching the given ciphertext. ' +
+        'Then, using the private key (which is not shown here for simplicity), ' +
+        'the receiver decrypts the ciphertext to recover the original message.';
+      // Auto-scroll to the result.
+      resultMessageDiv.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Initialize the slider display.
+    slider.dispatchEvent(new Event('input'));
+  </script>
+</body>
+</html>
