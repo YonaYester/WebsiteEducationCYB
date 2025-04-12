@@ -1,0 +1,67 @@
+<html>
+  <body bgcolor="CadetBlue">
+    <center><a href="index.html">Home </a></center>
+    <center><h1>S-Box substitution</h1></center>
+    <br>    
+
+    <p>It's a substitution table used to do nonlinear substitutions in the course of encryption.
+Each byte of the input is substituted for another byte according to a fixed table which strengthens the confusion and diffusion properties of the encryption.
+</p>
+
+    <h2>The Basics </h2>
+    <ol> 
+      <li>Make plaintext and create the key schedule.</li>
+      <li>The plaintext is split into 32-bit words. Split the data into a left half and a right half. This helps the algorithm mix the message in a secure way.</li>
+      <li>Serpent performs 32 rounds of transformations to scramble the message securely.</li>
+      <li>In each round, first mix the message with a round key.The message bits are combined with the round key using a method called XOR, which flips some of the bits depending on the key. </li>
+      <li>S-box transformation. This step substitutes small groups of bits with different bits using a kind of table called an S-box. Each round uses a different S-box to keep things unpredictable.</li>
+      <li>Rearrange the bits using a linear transformation. This step mixes up the positions of the bits to spread the effect of each bit across more of the message</li>
+      <li>After 32 rounds, apply one last XOR with the final round key. This final key mixing locks the scrambled data in place.</li>
+    </ol>
+
+    <h1>Type in S-box substitution message Demo</h1>
+
+<p>Type the text below</p>
+
+<div style="font-family: Arial; padding: 20px; max-width: 600px; margin: auto;">
+  <h2>Serpent S-Box Transformation Demo</h2>
+  <p>Type your message to see how it gets transformed over multiple rounds using simplified S-box logic.</p>
+
+  <input id="inputMessage" type="text" placeholder="Enter your message" style="width: 100%; padding: 10px;" />
+  <button onclick="runSerpent()" style="margin-top: 10px; padding: 10px 20px;">Encrypt</button>
+
+  <div id="output" style="margin-top: 20px; white-space: pre-wrap; background: #f9f9f9; padding: 15px; border: 1px solid #ccc;"></div>
+</div>
+
+<script>
+  // Simplified S-box (4-bit substitution table)
+  const sBox = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8,
+                0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7];
+
+  function applySBoxToByte(byte) {
+    // Split byte into high and low 4 bits
+    const high = (byte >> 4) & 0x0F;
+    const low = byte & 0x0F;
+    const transformed = (sBox[high] << 4) | sBox[low];
+    return transformed;
+  }
+
+  function runSerpent() {
+    const message = document.getElementById("inputMessage").value;
+    let output = `🔤 Original Message: "${message}"\n\n`;
+
+    // Convert message to bytes
+    let bytes = Array.from(message).map(char => char.charCodeAt(0));
+
+    for (let round = 1; round <= 4; round++) {
+      bytes = bytes.map(applySBoxToByte);
+      output += `🔁 Round ${round}: ${bytes.map(b => b.toString(16).padStart(2, '0')).join(" ")}\n`;
+    }
+
+    output += `\n🔐 Final (hex): ${bytes.map(b => b.toString(16).padStart(2, '0')).join("")}`;
+    document.getElementById("output").innerText = output;
+  }
+</script>
+  </body>
+
+</html>

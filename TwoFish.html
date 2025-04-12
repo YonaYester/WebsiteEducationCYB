@@ -1,0 +1,64 @@
+<html>
+  <body bgcolor="lightblue">
+
+    <center><a href="index.html">Home </a></center>
+    <center><h1>TwoFish Encryption</h1></center>
+    <br>    
+
+    <p>TwoFish Encryption is a symmetric key block cipher. Uses the same key on both sides and always operating compounding blocks of data, usually 128 bits or more.
+    Twofish uses a structure called a Feistel network, which splits data into two halves and processes them with rounds of mixing, substituting, and combining.
+
+It uses:A 16-byte block size (128 bits of data), a variable-length key (128, 192, or 256 bits), and 16 rounds of operations to mix the data thoroughly.
+</p>
+
+    <h2>The Basics </h2>
+    <ol> 
+      <li>A secret key and plaintext are inputed.</li>
+      <li>The plaintext is split into 32-bit words. Split the data into a left half and a right half. This helps the algorithm mix the message in a secure way.</li>
+      <li>Mix the key using key schedule (A process that turns the main key into many small pieces (subkeys), one for each round.) </li>
+      <li>Pre-whiteningis when it combines your message with a piece of the key using something called XOR (think of this like scrambling with a secret sauce). </li>
+      <li>Does 16 rounds of mixing, scrambles the message using math and the mini-keys. It swaps and mixes the two halves of the message again and again.</li>
+      <li>Finally post-whitening, one final layer of scrambling with part of the key. </li>
+    </ol>
+
+    <h1>Type in TwoFish message Demo</h1>
+
+<p>Type the text below</p>
+
+<label for="message"><strong>Message:</strong></label><br>
+  <textarea id="message" rows="4" style="width:100%;"></textarea><br><br>
+
+  <label for="key"><strong>Secret Key:</strong></label><br>
+  <input id="key" type="text" style="width:100%;" /><br><br>
+
+  <button onclick="encryptTwofish()" style="padding: 10px 20px;">Encrypt Message</button>
+
+  <h3>Encrypted Output:</h3>
+  <div id="output" style="background: #f4f4f4; padding: 10px; border-radius: 5px;"></div>
+</div>
+
+<script>
+  function encryptTwofish() {
+    const message = document.getElementById("message").value;
+    const key = document.getElementById("key").value;
+
+    if (!message || !key) {
+      alert("Please enter both a message and a key!");
+      return;
+    }
+
+    // Simulate a fake encryption for demo purposes:
+    let fakeEncrypted = "";
+
+    for (let i = 0; i < message.length; i++) {
+      let charCode = message.charCodeAt(i) ^ key.charCodeAt(i % key.length); // simple XOR
+      fakeEncrypted += charCode.toString(16).padStart(2, '0'); // hex string
+    }
+
+    document.getElementById("output").textContent = fakeEncrypted.toUpperCase();
+  }
+</script>
+
+  </body>
+
+</html>
