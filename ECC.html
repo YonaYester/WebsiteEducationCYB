@@ -1,0 +1,83 @@
+<html>
+  <body bgcolor="Pink">
+    <center><a href="index.html">Home </a></center>
+    <center><h1>Elliptical curve cryptography (ECC)</h1></center>
+    <br>    
+
+    <p>ECC is a encryption based on the elliptic curve theory. Uses the mathematical process to merge two distinct keys. 
+They then use the output to encrypt and decrypt data. One key is public and known to anyone, and the other is private and known only to the sender and receiver of the data.</p>
+
+    <h2>The Basics </h2>
+    <ol> 
+      <li>ECC uses an equation that looks like: y² = x³ + ax + b</li>
+      <li>Pick a Base Point (G): From all the points on the curve, we choose one special point called G (the "generator point").</li>
+      <li>Choose a secret number — this is your private key. It’s just a big number only you know.</li>
+      <li>Multiply the generator point G by your secret number using ECC (repeated addition on the curve). Public Key = Private Key × G</li>
+      <li>Get your public key, uses it to turn your message into a point on the curve (M).</li>
+      <li>Picks a new secret number k. Compute C1 = k × G and compute C2 = M + k × (Your Public Key) 
+C1 and C2 are the encrypted pieces.</li>
+      <li>To decrypt: Use your private key to compute: Shared secret = Private Key × C1, subtract the shared secret from C2 to get the original message point: M = C2 - (Private Key × C1)
+
+Then you decode the message point back into readable text.</li>
+    </ol>
+
+    <h1>Type in ECC Demo</h1>
+
+<p>Type the text below</p>
+
+<h2>Elliptic Curve Cryptography (ECC) Educational Demo</h2>
+
+<label for="message">Type your message:</label><br>
+<input type="text" id="message" placeholder="Enter message" style="width: 300px;"><br><br>
+
+<button onclick="simulateECC()">Encrypt</button>
+
+<div id="output" style="margin-top:20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+<script>
+function simulateECC() {
+    const message = document.getElementById("message").value;
+    if (!message) {
+        alert("Please type a message.");
+        return;
+    }
+
+    // Step 1: Create a private key (random small number for demo)
+    const privateKey = Math.floor(Math.random() * 10) + 1;
+
+    // Step 2: Generator point (just a pair of small numbers for demo)
+    const G = { x: 5, y: 1 };
+
+    // Step 3: Public key = privateKey * G (simplified)
+    const publicKey = {
+        x: G.x * privateKey,
+        y: G.y * privateKey
+    };
+
+    // Step 4: Pick a random "k" for this encryption
+    const k = Math.floor(Math.random() * 10) + 1;
+
+    // Step 5: Encrypt the message (simplified)
+    const C1 = { x: G.x * k, y: G.y * k };
+    const sharedSecret = { x: publicKey.x * k, y: publicKey.y * k };
+
+    // Fake "encryption": shift each character by sharedSecret.x
+    const encrypted = message.split('').map(char =>
+        String.fromCharCode(char.charCodeAt(0) + sharedSecret.x)
+    ).join('');
+
+    document.getElementById("output").innerHTML = `
+        <strong>Private Key:</strong> ${privateKey}<br>
+        <strong>Public Key:</strong> (${publicKey.x}, ${publicKey.y})<br>
+        <strong>Random k:</strong> ${k}<br>
+        <strong>C1 (k × G):</strong> (${C1.x}, ${C1.y})<br>
+        <strong>Shared Secret:</strong> (${sharedSecret.x}, ${sharedSecret.y})<br><br>
+        <strong>Encrypted Message:</strong> ${encrypted}
+    `;
+}
+</script>
+
+    <center><a href="https://www.techtarget.com/searchsecurity/definition/elliptical-curve-cryptography">Click here for more info </a></center>
+  </body>
+
+</html>
