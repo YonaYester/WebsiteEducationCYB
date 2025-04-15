@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Form with Popup Notifications</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    input, textarea, button {
+      display: block;
+      width: 80%;
+      margin: 10px auto;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Contact Us</h1>
+    <!-- Note: We removed the action attribute because we'll use JavaScript -->
+    <form id="contactForm">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("contactForm");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();  // Prevent default form submission
+
+      // Create a FormData object from the form inputs.
+      const formData = new FormData(form);
+
+      // Use fetch to send the data via POST to /submit-contact.
+      fetch("/submit-contact", {
+        method: "POST",
+        body: formData
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.text();  // expecting a plain text success message
+        })
+        .then(data => {
+          // Display a success popup
+          alert("Success: " + data);
+          // Optionally, clear the form after success:
+          form.reset();
+        })
+        .catch(error => {
+          // Display an error popup
+          alert("Error: " + error.message);
+        });
+    });
+  </script>
+</body>
+</html>
