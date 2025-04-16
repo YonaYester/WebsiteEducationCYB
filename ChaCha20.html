@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ChaCha20 Quarter Round Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    /* Header with Home button */
+    #header {
+      position: relative;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    #homeButton {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    h1 {
+      margin: 0;
+      padding-top: 10px;
+      color: #333;
+    }
+    .section {
+      background: #fff;
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .section p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .choices {
+      margin: 20px 0;
+    }
+    .choice-btn {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      margin: 5px;
+      width: 250px;
+      text-align: center;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+    .explanation {
+      text-align: left;
+      margin-top: 15px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .explanation code {
+      background: #f2f2f2;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .explanation strong {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Home button linking to index.html -->
+  <div id="header">
+    <a id="homeButton" href="index.html">Home</a>
+    <h1>ChaCha20 Quarter Round Challenge</h1>
+  </div>
+
+  <div class="section">
+    <p>
+      Below is a simplified puzzle simulating one ChaCha20 quarter-round operation.
+    </p>
+    <p>
+      Our <strong>initial state</strong> (in decimal) is:
+    </p>
+    <p><strong>a = 1, b = 2, c = 3, d = 4</strong></p>
+    <p>
+      The ChaCha20 quarter-round uses a sequence of
+      <strong>add, XOR, and rotate</strong> steps on 32-bit words. 
+      After applying <em>one</em> quarter-round, which final state is correct?
+    </p>
+
+    <div class="choices">
+      <!-- We'll dynamically fill these buttons in JS -->
+      <button class="choice-btn" data-index="0"></button>
+      <button class="choice-btn" data-index="1"></button>
+      <button class="choice-btn" data-index="2"></button>
+      <button class="choice-btn" data-index="3"></button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    /**************************************************
+     * Quarter Round Implementation (ChaCha20 style)
+     * For a, b, c, d (32-bit integers).
+     **************************************************/
+    function rotateLeft(x, n) {
+      // 32-bit rotate left
+      return ((x << n) | (x >>> (32 - n))) >>> 0;
+    }
+
+    function quarterRound(a, b, c, d) {
+      // All math is mod 2^32, so use >>> 0 to keep them in 32-bit space.
+      // Step 1:
+      a = (a + b) >>> 0; d ^= a; d = rotateLeft(d, 16);
+      // Step 2:
+      c = (c + d) >>> 0; b ^= c; b = rotateLeft(b, 12);
+      // Step 3:
+      a = (a + b) >>> 0; d ^= a; d = rotateLeft(d, 8);
+      // Step 4:
+      c = (c + d) >>> 0; b ^= c; b = rotateLeft(b, 7);
+
+      return [a >>> 0, b >>> 0, c >>> 0, d >>> 0];
+    }
+
+    // 1) Compute the "true" final state for (a,b,c,d) = (1,2,3,4)
+    const finalState = quarterRound(1,2,3,4);
+
+    // We'll create four possible states (including the correct one).
+    // Adjust decoys as desired.
+    const possibleAnswers = [
+      finalState,               // correct
+      [12, 77, 300, 1000],
+      [211, 22, 888, 9999],
+      [1234, 2345, 3456, 4567],
+    ];
+
+    // Shuffle them so the correct one isn't always first.
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+    shuffleArray(possibleAnswers);
+
+    // Display states on the buttons
+    const choiceButtons = document.querySelectorAll(".choice-btn");
+    choiceButtons.forEach((btn, idx) => {
+      const stateArr = possibleAnswers[idx];
+      btn.textContent = `(${stateArr[0]}, ${stateArr[1]}, ${stateArr[2]}, ${stateArr[3]})`;
+    });
+
+    // Compare chosen to finalState
+    const resultDiv = document.getElementById("result");
+    choiceButtons.forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        const chosen = possibleAnswers[idx];
+        if (chosen[0]===finalState[0] && chosen[1]===finalState[1] &&
+            chosen[2]===finalState[2] && chosen[3]===finalState[3]) {
+          // Correct
+          resultDiv.innerHTML = `
+            <span style="color: green;">Correct!</span>
+            <br><br>
+            <div class="explanation">
+              <strong>How did we get there?</strong>
+              <br><br>
+              A single quarter-round on <code>a=1, b=2, c=3, d=4</code> works as follows:
+              <ol>
+                <li><code>a = a + b</code>, <code>d ^= a</code>, rotate <code>d</code> by 16 bits.</li>
+                <li><code>c = c + d</code>, <code>b ^= c</code>, rotate <code>b</code> by 12 bits.</li>
+                <li><code>a = a + b</code>, <code>d ^= a</code>, rotate <code>d</code> by 8 bits.</li>
+                <li><code>c = c + d</code>, <code>b ^= c</code>, rotate <code>b</code> by 7 bits.</li>
+              </ol>
+              These add, XOR, and rotate operations significantly scramble the four 32-bit words.
+              <br><br>
+              The final result is
+              <strong>(${finalState[0]}, ${finalState[1]}, ${finalState[2]}, ${finalState[3]})</strong>.
+              <br><br>
+              ChaCha20 repeats this quarter-round mixing many times over multiple blocks to ensure security.
+              <br><br>
+              <a href="https://www.tutorialspoint.com/cryptography/cryptography_chacha20_encryption_algorithm.htm" target="_blank">
+                Click here for more information about ChaCha20
+              </a>
+            </div>
+          `;
+          resultDiv.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // Incorrect
+          resultDiv.innerHTML = `<span style="color: red;">Incorrect.</span> Try again!`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

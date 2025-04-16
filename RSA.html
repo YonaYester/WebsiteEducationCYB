@@ -1,151 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>RSA Encryption Demo</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 20px;
-        text-align: center;
-      }
-      /* Header styling */
-      #header {
-        position: relative;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #ccc;
-      }
-      #homeButton {
-        position: absolute;
-        left: 0;
-        top: 0;
-        background-color: #2ecc71;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 16px;
-      }
-      h1 {
-        margin: 0;
-        padding-top: 10px;
-        color: #333;
-      }
-      .section {
-        background: #fff;
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      }
-      input[type="number"] {
-        padding: 10px;
-        font-size: 16px;
-        width: 100px;
-        margin: 10px;
-      }
-      button {
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        border: none;
-        background: #3498db;
-        color: white;
-        border-radius: 5px;
-        margin: 10px;
-      }
-      #revealButton {
-        background: #2ecc71;
-        display: none;
-      }
-      #result {
-        margin-top: 20px;
-        font-size: 18px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Header with Home button linking to index.html -->
-    <div id="header">
-      <a id="homeButton" href="index.html">Home</a>
-      <h1>RSA Encryption Demo</h1>
-    </div>
+<head>
+  <meta charset="UTF-8">
+  <title>RSA Challenge: Decrypt the Ciphertext</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    /* Header with Home button */
+    #header {
+      position: relative;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    #homeButton {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    h1 {
+      margin: 0;
+      padding-top: 10px;
+      color: #333;
+    }
+    .section {
+      background: #fff;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .section p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .choices {
+      margin: 20px 0;
+    }
+    .choices button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Home button linking to index.html -->
+  <div id="header">
+    <a id="homeButton" href="index.html">Home</a>
+    <h1>RSA Challenge: Decrypt the Ciphertext</h1>
+  </div>
 
-    <div class="section">
-      <h2>RSA Encryption Simulation</h2>
-      <p>This demo uses simple small numbers for demonstration purposes:</p>
-      <p>
-        <strong>p = 5, q = 11</strong> leading to <strong>n = 55</strong><br>
-        Public key: <strong>e = 3</strong>, Private key: <strong>d = 27</strong>
-      </p>
-      <p>Enter a plaintext number (between 0 and 54):</p>
-      <input id="plaintext" type="number" min="0" max="54" value="7">
-      <br>
-      <button id="encryptButton">Encrypt</button>
-      <button id="decryptButton" style="display:none;">Decrypt</button>
-      <div id="result"></div>
+  <!-- Main RSA Challenge Section -->
+  <div class="section">
+    <p><strong>Public Key:</strong> (n = 55, e = 3)</p>
+    <p><strong>Ciphertext:</strong> 13</p>
+    <p>What is the decrypted message?</p>
+    <div class="choices">
+      <button class="choice" data-answer="3">3</button>
+      <button class="choice" data-answer="7">7</button>
+      <button class="choice" data-answer="13">13</button>
+      <button class="choice" data-answer="19">19</button>
     </div>
+    <div id="result"></div>
+  </div>
 
-    <script>
-      // RSA parameters (using small numbers for demo)
-      const p = 5;
-      const q = 11;
-      const n = p * q;        // n = 55
-      const e = 3;
-      const d = 27;
-      
-      const plaintextInput = document.getElementById('plaintext');
-      const encryptButton = document.getElementById('encryptButton');
-      const decryptButton = document.getElementById('decryptButton');
-      const resultDiv = document.getElementById('result');
-      
-      let ciphertext = null;
-      
-      // Helper function for modular exponentiation: computes (base^exp) mod mod.
-      function modExp(base, exp, mod) {
-        let result = 1;
-        base = base % mod;
-        while (exp > 0) {
-          if (exp % 2 === 1) {
-            result = (result * base) % mod;
-          }
-          exp = Math.floor(exp / 2);
-          base = (base * base) % mod;
+  <!-- JavaScript for handling the challenge -->
+  <script>
+    // Set the correct answer (in this example, 7)
+    const correctAnswer = "7";
+    const choices = document.querySelectorAll(".choice");
+    const resultDiv = document.getElementById("result");
+
+    choices.forEach(button => {
+      button.addEventListener("click", function() {
+        const selected = this.getAttribute("data-answer");
+        if (selected === correctAnswer) {
+          resultDiv.innerHTML = 
+            "<strong>Correct!</strong> The decrypted message is 7.<br><br>" +
+            "RSA encryption uses a public key (n, e) to encrypt a message and a private key to decrypt it. " +
+            "For this simplified example, 7^3 mod 55 = 343 mod 55 = 13, which is our ciphertext. " +
+            "The corresponding decryption recovers the original message.<br><br>" +
+            "<a href='https://brilliant.org/wiki/rsa-encryption/' target='_blank'>" +
+            "For more information about RSA encryption</a>";
+          // Auto-scroll to the result section.
+          resultDiv.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          resultDiv.innerHTML = "<strong>Incorrect.</strong> Please try again.";
         }
-        return result;
-      }
-      
-      // Encrypt button event
-      encryptButton.addEventListener('click', function() {
-        const m = parseInt(plaintextInput.value);
-        if (m < 0 || m >= n) {
-          resultDiv.innerHTML = '<span style="color:red;">Please enter a number between 0 and ' + (n-1) + '.</span>';
-          return;
-        }
-        // RSA encryption: ciphertext c = m^e mod n
-        ciphertext = modExp(m, e, n);
-        resultDiv.innerHTML = '<strong>Ciphertext:</strong> ' + ciphertext;
-        decryptButton.style.display = 'inline-block';
       });
-      
-      // Decrypt button event
-      decryptButton.addEventListener('click', function() {
-        if (ciphertext === null) return;
-        // RSA decryption: m = c^d mod n
-        const decrypted = modExp(ciphertext, d, n);
-        resultDiv.innerHTML += '<br><br><strong>Decrypted Message:</strong> ' + decrypted +
-          '<br><br><strong>Explanation:</strong><br>' +
-          'RSA encryption works by using a public key (n, e) to encrypt a message, while a private key (d) ' +
-          'is used to decrypt it. In this demo, the plaintext is raised to the power of e and then reduced modulo n ' +
-          'to produce the ciphertext. Decryption involves raising the ciphertext to the power of d modulo n, ' +
-          'recovering the original message.';
-        // Auto-scroll to the result.
-        resultDiv.scrollIntoView({ behavior: 'smooth' });
-      });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Diffie–Hellman Challenge</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+      /* Header with Home button */
+      #header {
+        position: relative;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+      }
+      #homeButton {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: #2ecc71;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 16px;
+      }
+      h1 {
+        margin: 0;
+        padding-top: 10px;
+        color: #333;
+      }
+      .section {
+        background: #fff;
+        max-width: 700px;
+        margin: 30px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        text-align: center;
+      }
+      .section p {
+        font-size: 18px;
+        line-height: 1.6;
+      }
+      .choices {
+        margin: 20px 0;
+      }
+      .choice-btn {
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #3498db;
+        color: white;
+        border-radius: 5px;
+        margin: 5px;
+        width: 150px;
+        text-align: center;
+      }
+      #result {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+      }
+      .explanation {
+        text-align: left;
+        margin-top: 15px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .explanation a {
+        color: #3498db;
+        text-decoration: none;
+      }
+      .explanation a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header with Home button linking to index.html -->
+    <div id="header">
+      <a id="homeButton" href="index.html">Home</a>
+      <h1>Diffie–Hellman Challenge</h1>
+    </div>
+
+    <div class="section">
+      <p>
+        Diffie–Hellman key exchange allows two parties to establish a shared secret.
+      </p>
+      <p>
+        For this challenge, we use small numbers for demonstration:
+      </p>
+      <p>
+        <strong>p = 23, g = 5</strong>
+      </p>
+      <p>
+        Assume Alice’s secret value <em>a</em> is <strong>6</strong> (kept private) and Bob’s public value is <strong>B = 19</strong>.<br>
+        The shared secret is computed as <strong>s = B<sup>a</sup> mod p</strong>.
+      </p>
+      <p>
+        What is the shared secret?
+      </p>
+
+      <div class="choices">
+        <!-- Four multiple-choice buttons; text content set by JS -->
+        <button class="choice-btn" data-index="0"></button>
+        <button class="choice-btn" data-index="1"></button>
+        <button class="choice-btn" data-index="2"></button>
+        <button class="choice-btn" data-index="3"></button>
+      </div>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      // Simple modular exponentiation (base^exp mod mod)
+      function modExp(base, exp, mod) {
+        let result = 1;
+        base = base % mod;
+        while(exp > 0) {
+          if(exp % 2 === 1) {
+            result = (result * base) % mod;
+          }
+          exp = Math.floor(exp / 2);
+          base = (base * base) % mod;
+        }
+        return result;
+      }
+
+      // Parameters for the simulation
+      const p = 23;
+      const g = 5;
+      const alicePrivate = 6;  // a = 6 (kept secret)
+      const B = 19;            // Bob's public value
+      // Compute shared secret: s = B^a mod p
+      const sharedSecret = modExp(B, alicePrivate, p);  // Expected result: 2
+
+      // Prepare possible answers (correct + decoys)
+      const possibleAnswers = [sharedSecret, 7, 10, 19];
+      // Shuffle possible answers so correct answer is random
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+      shuffleArray(possibleAnswers);
+
+      // Set button texts
+      const choiceButtons = document.querySelectorAll(".choice-btn");
+      choiceButtons.forEach((btn, idx) => {
+        btn.textContent = possibleAnswers[idx];
+      });
+
+      // Handle click events on choice buttons
+      const resultDiv = document.getElementById("result");
+      choiceButtons.forEach((btn, idx) => {
+        btn.addEventListener("click", () => {
+          const chosen = parseInt(btn.textContent);
+          if (chosen === sharedSecret) {
+            resultDiv.innerHTML = 
+              "<span style='color: green;'>Correct!</span><br><br>" +
+              "The shared secret is " + sharedSecret + ".<br><br>" +
+              "<div class='explanation'>" +
+                "<strong>How It Works:</strong><br>" +
+                "In Diffie–Hellman, both parties contribute a secret number. Here, Alice's secret is 6.<br>" +
+                "Bob's public value is 19 (computed as g<sup>b</sup> mod p, though b is kept secret).<br>" +
+                "The shared secret is then computed as 19<sup>6</sup> mod 23, which equals " + sharedSecret + ".<br><br>" +
+                "<a href='https://www.practicalnetworking.net/series/cryptography/diffie-hellman/' target='_blank'>" +
+                  "Click here for more information about Diffie–Hellman" +
+                "</a>" +
+              "</div>";
+            resultDiv.scrollIntoView({ behavior: "smooth" });
+          } else {
+            resultDiv.innerHTML = "<span style='color: red;'>Incorrect. Please try again.</span>";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
