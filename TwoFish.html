@@ -1,64 +1,272 @@
-<html>
-  <body bgcolor="lightblue">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Twofish Drag & Drop Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+      margin: 0;
+    }
+    /* Header with Home button */
+    #header {
+      position: relative;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    #homeButton {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    h1 {
+      margin: 0;
+      padding-top: 10px;
+      color: #333;
+    }
+    .section {
+      background: #fff;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .section h2 {
+      margin-top: 0;
+    }
+    /* Drag and drop styling */
+    #dragContainer, #dropContainer {
+      border: 2px dashed #ccc;
+      padding: 10px;
+      min-height: 100px;
+      margin: 15px auto;
+      width: 90%;
+      max-width: 600px;
+    }
+    .draggable {
+      background: #3498db;
+      color: white;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: grab;
+      user-select: none;
+    }
+    .placeholder {
+      background: #bdc3c7;
+      color: #333;
+      padding: 10px;
+      margin: 5px;
+      border: 2px dashed #95a5a6;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      margin: 10px;
+    }
+    #result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    /* Bottom content styling */
+    .bottom-section {
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+    }
+    .bottom-section .explanation {
+      font-size: 18px;
+      line-height: 1.6;
+      text-align: left;
+      max-width: 700px;
+      margin: 0 auto 15px auto;
+    }
+    .bottom-section .explanation ol {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+    .bottom-section .explanation li {
+      margin-bottom: 8px;
+    }
+    .bottom-section img {
+      max-width: 500px; /* Slightly larger image */
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .bottom-section a {
+      font-weight: bold;
+      text-decoration: none;
+      color: #3498db;
+      font-size: 16px;
+    }
+    .bottom-section a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div id="header">
+    <a id="homeButton" href="index.html">Home</a>
+    <h1>Twofish Drag & Drop Challenge</h1>
+  </div>
 
-    <center><a href="index.html">Home </a></center>
-    <center><h1>TwoFish Encryption</h1></center>
-    <br>    
-
-    <p>TwoFish Encryption is a symmetric key block cipher. Uses the same key on both sides and always operating compounding blocks of data, usually 128 bits or more.
-    Twofish uses a structure called a Feistel network, which splits data into two halves and processes them with rounds of mixing, substituting, and combining.
-
-It uses:A 16-byte block size (128 bits of data), a variable-length key (128, 192, or 256 bits), and 16 rounds of operations to mix the data thoroughly.
-</p>
-
-    <h2>The Basics </h2>
-    <ol> 
-      <li>A secret key and plaintext are inputed.</li>
-      <li>The plaintext is split into 32-bit words. Split the data into a left half and a right half. This helps the algorithm mix the message in a secure way.</li>
-      <li>Mix the key using key schedule (A process that turns the main key into many small pieces (subkeys), one for each round.) </li>
-      <li>Pre-whiteningis when it combines your message with a piece of the key using something called XOR (think of this like scrambling with a secret sauce). </li>
-      <li>Does 16 rounds of mixing, scrambles the message using math and the mini-keys. It swaps and mixes the two halves of the message again and again.</li>
-      <li>Finally post-whitening, one final layer of scrambling with part of the key. </li>
+  <!-- Instructions for Drag and Drop Game -->
+  <div class="section">
+    <h2>Arrange the Twofish Round Steps</h2>
+    <p>
+      Drag and drop the following steps into the correct order for a simplified Twofish encryption round.
+      The correct order is:
+    </p>
+    <ol style="text-align: left; max-width: 600px; margin: 0 auto;">
+      <li>Pre-whitening (XOR plaintext with input key)</li>
+      <li>S-box substitution</li>
+      <li>MDS mixing (linear transformation)</li>
+      <li>Post-whitening (XOR with output key)</li>
     </ol>
+    <p>
+      Drag the boxes from the container below and place them into the drop zone in the correct order.
+    </p>
+    <div id="dragContainer">
+      <!-- Draggable items will appear here -->
+    </div>
+    <h3>Drop Zone</h3>
+    <div id="dropContainer">
+      <!-- User will drop items here -->
+    </div>
+    <button id="checkBtn">Check Order</button>
+    <div id="result"></div>
+  </div>
 
-    <h1>Type in TwoFish message Demo</h1>
+  <!-- Bottom Content Revealed Upon Correct Ordering -->
+  <div id="bottomContent" class="bottom-section">
+    <!-- Explanation Text Above the Image -->
+    <div class="explanation">
+      <strong>Code Explanation:</strong>
+      <ol>
+        <li>
+          <strong>Pre-whitening:</strong> The plaintext is first XORed with an input key to mix in secret key material.
+        </li>
+        <li>
+          <strong>S-box substitution:</strong> A non-linear substitution box replaces each nibble with another to add confusion.
+        </li>
+        <li>
+          <strong>MDS mixing:</strong> A Maximum Distance Separable (MDS) matrix multiplies the data to further diffuse the bits.
+        </li>
+        <li>
+          <strong>Post-whitening:</strong> A final XOR with an output key completes the encryption round.
+        </li>
+      
+    </div>
+    <!-- Placeholder Image -->
+    <img src="img/twofishh.png" alt="Twofish Documentation Placeholder Image">
+    <!-- Bolded Link Below the Image -->
+    <p style="margin-top: 10px;">
+      <a href="https://www.splunk.com/en_us/blog/learn/twofish-encryption-algorithm.html" target="_blank">
+        For more information about Twofish, click here
+      </a>
+    </p>
+  </div>
 
-<p>Type the text below</p>
-
-<label for="message"><strong>Message:</strong></label><br>
-  <textarea id="message" rows="4" style="width:100%;"></textarea><br><br>
-
-  <label for="key"><strong>Secret Key:</strong></label><br>
-  <input id="key" type="text" style="width:100%;" /><br><br>
-
-  <button onclick="encryptTwofish()" style="padding: 10px 20px;">Encrypt Message</button>
-
-  <h3>Encrypted Output:</h3>
-  <div id="output" style="background: #f4f4f4; padding: 10px; border-radius: 5px;"></div>
-</div>
-
-<script>
-  function encryptTwofish() {
-    const message = document.getElementById("message").value;
-    const key = document.getElementById("key").value;
-
-    if (!message || !key) {
-      alert("Please enter both a message and a key!");
-      return;
+  <script>
+    // Define the correct order for the steps.
+    const correctOrder = [
+      "Pre-whitening",
+      "S-box substitution",
+      "MDS mixing",
+      "Post-whitening"
+    ];
+    
+    // Clone and shuffle the steps to create a draggable list.
+    let steps = [...correctOrder];
+    // Simple Fisher-Yates Shuffle.
+    for (let i = steps.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [steps[i], steps[j]] = [steps[j], steps[i]];
     }
+    
+    // References to the drag container and drop container
+    const dragContainer = document.getElementById("dragContainer");
+    const dropContainer = document.getElementById("dropContainer");
+    const resultDiv = document.getElementById("result");
+    const bottomContent = document.getElementById("bottomContent");
 
-    // Simulate a fake encryption for demo purposes:
-    let fakeEncrypted = "";
+    // Create draggable items.
+    steps.forEach(text => {
+      const item = document.createElement("div");
+      item.className = "draggable";
+      item.textContent = text;
+      item.draggable = true;
+      // Set data transfer when drag starts.
+      item.addEventListener("dragstart", dragStart);
+      dragContainer.appendChild(item);
+    });
+    
+    // Allow drop events on drop container.
+    dropContainer.addEventListener("dragover", dragOver);
+    dropContainer.addEventListener("drop", drop);
+    
+    // Allow drop events on drag container so that user can remove an item from drop if needed.
+    dragContainer.addEventListener("dragover", dragOver);
+    dragContainer.addEventListener("drop", drop);
 
-    for (let i = 0; i < message.length; i++) {
-      let charCode = message.charCodeAt(i) ^ key.charCodeAt(i % key.length); // simple XOR
-      fakeEncrypted += charCode.toString(16).padStart(2, '0'); // hex string
+    let draggedItem = null;
+
+    function dragStart(e) {
+      draggedItem = this;
+      e.dataTransfer.effectAllowed = "move";
     }
-
-    document.getElementById("output").textContent = fakeEncrypted.toUpperCase();
-  }
-</script>
-
-  </body>
-
+    
+    function dragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    }
+    
+    function drop(e) {
+      e.preventDefault();
+      if (draggedItem) {
+        // Append the dragged item to the container it was dropped in.
+        this.appendChild(draggedItem);
+        draggedItem = null;
+      }
+    }
+    
+    // Check the order when user clicks the "Check Order" button.
+    document.getElementById("checkBtn").addEventListener("click", () => {
+      // Get the text content of items in the drop container in order.
+      let userOrder = Array.from(dropContainer.children).map(item => item.textContent.trim());
+      // Compare with the correct order.
+      let isCorrect = (userOrder.length === correctOrder.length) &&
+                      userOrder.every((step, index) => step === correctOrder[index]);
+      if (isCorrect) {
+        resultDiv.style.color = "green";
+        resultDiv.textContent = "Correct order!";
+        bottomContent.style.display = "block";
+        bottomContent.scrollIntoView({ behavior: "smooth" });
+      } else {
+        resultDiv.style.color = "red";
+        resultDiv.textContent = "Incorrect order. Please try again.";
+      }
+    });
+  </script>
+</body>
 </html>

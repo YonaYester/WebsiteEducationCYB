@@ -70,6 +70,17 @@
       display: none;
       background: #2ecc71;
     }
+    /* Bottom content initially hidden */
+    .bottom-section {
+      margin: 20px 0;
+      display: none;
+    }
+    .bottom-section img {
+      max-width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -80,8 +91,11 @@
   </div>
   
   <div class="section">
-    <p><strong>Ciphertext:</strong> c₁ = 10, c₂ = 19</p>
-    <p>Use the slider below to choose the ephemeral key (y) used in the encryption process.</p>
+    <p class="ciphertext"><strong>Ciphertext:</strong> c₁ = 10, c₂ = 19</p>
+    <p>
+      Move the slider below to choose the <strong>ephemeral key (y)</strong> used during encryption.
+      ElGamal encryption uses a random ephemeral key for each message to ensure security.
+    </p>
     
     <div class="slider-container">
       <input type="range" id="ephemeralSlider" min="1" max="10" value="1">
@@ -92,20 +106,35 @@
     <button id="revealButton">Reveal Decrypted Message</button>
     <div class="result" id="resultMessage"></div>
     
-    <p style="margin-top: 20px;">
-      <em>
-      ElGamal encryption picks a random ephemeral key (y) to generate the ciphertext. Here, c₁ is computed as 5ʸ mod 23.  
+    <p style="margin-top: 20px; font-style: italic;">
+      In this demo, <strong>c₁</strong> is computed as gʸ mod p (with g = 5 and p = 23).
       Try to set the correct y so that c₁ becomes 10.
-      </em>
     </p>
+  </div>
+  
+  <!-- Bottom content revealed only when the answer is correct -->
+  <div id="bottomContent" class="bottom-section">
+    <!-- Link that opens in a new tab -->
+    <p>
+      <a href="https://math-sites.uncg.edu/sites/pauli/112/HTML/secelgamal.html" target="_blank">
+        Click Here For More Information!
+      </a>
+    </p>
+    <!-- Picture placeholder; replace "elgamal_placeholder.png" with your actual image file -->
+    <img
+    src="img/algamalfr.png"
+    alt="ElGamal Encryption Placeholder Image"
+    style="max-width: 800px; border: 1px solid #ccc; border-radius: 5px;"
+  >
+  
   </div>
   
   <script>
     // Simulation parameters.
     const p = 23;
     const g = 5;
-    const targetC1 = 10;  // given ciphertext value c1.
-    const correctEphemeral = 3;  // correct ephemeral key (y) for demo
+    const targetC1 = 10;  // Given ciphertext value c1.
+    const correctEphemeral = 3;  // The correct ephemeral key (y) for the demo.
     const decryptedMessage = "7";  // Decrypted message to be revealed.
 
     const slider = document.getElementById('ephemeralSlider');
@@ -113,6 +142,7 @@
     const computedC1Span = document.getElementById('computedC1');
     const revealButton = document.getElementById('revealButton');
     const resultMessageDiv = document.getElementById('resultMessage');
+    const bottomContentDiv = document.getElementById('bottomContent');
 
     // Compute g^y mod p using a simple loop.
     function modExp(base, exponent, modulus) {
@@ -129,24 +159,34 @@
       selectedKeySpan.textContent = y;
       const computedC1 = modExp(g, y, p);
       computedC1Span.textContent = computedC1;
-      // Show the reveal button if computed c1 matches target.
+      
+      // Show the reveal button if computed c1 matches the target.
       if (computedC1 === targetC1) {
         revealButton.style.display = 'inline-block';
       } else {
         revealButton.style.display = 'none';
         resultMessageDiv.textContent = '';
+        // Ensure bottom content stays hidden.
+        bottomContentDiv.style.display = 'none';
       }
     });
 
-    // When the reveal button is clicked, display the decrypted message and explanation.
+    // When the reveal button is clicked, display the decrypted message and reveal extra content.
     revealButton.addEventListener('click', function() {
       resultMessageDiv.innerHTML =
-        '<strong>Decrypted Message:</strong> ' + decryptedMessage + '<br><br>' +
-        '<strong>Explanation:</strong><br>' +
-        'ElGamal encryption uses a random ephemeral key (y) for each encryption. Here, c₁ is computed as gʸ mod p. ' +
-        'For this demo, when y = ' + correctEphemeral + ', c₁ becomes 10, matching the given ciphertext. ' +
-        'Then, using the private key (which is not shown here for simplicity), ' +
-        'the receiver decrypts the ciphertext to recover the original message.';
+  '<strong>Decrypted Message:</strong> ' + decryptedMessage + '<br><br>' +
+  '<strong>Explanation:</strong><br>' +
+  'ElGamal encryption is a method of keeping messages secret using math. In our demo, we use a special number called the "ephemeral key" (y). ' +
+  'We calculate a value c₁ with the formula: <code>c₁ = g<sup>y</sup> mod p</code>. ' +
+  'That means you take the number 5 (which is g), raise it to the power of y, and then divide by 23 (which is p), keeping only the remainder.<br><br>' +
+  'For example, if y = 3, 5³ = 125. Dividing 125 by 23 leaves a remainder of 10. ' +
+  'So, when y = 3, c₁ becomes 10, which matches the ciphertext we need.<br><br>' +
+  'Try moving the slider until c₁ equals 10. When you find the right y, the hidden message is revealed!';
+
+      
+      // Reveal the bottom content (link and placeholder image).
+      bottomContentDiv.style.display = 'block';
+      
       // Auto-scroll to the result.
       resultMessageDiv.scrollIntoView({ behavior: 'smooth' });
     });

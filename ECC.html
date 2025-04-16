@@ -1,83 +1,406 @@
-<html>
-  <body bgcolor="Pink">
-    <center><a href="index.html">Home </a></center>
-    <center><h1>Elliptical curve cryptography (ECC)</h1></center>
-    <br>    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ECC Coloring Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    /* Header */
+    #header {
+      position: relative;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    #homeButton {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    h1 {
+      margin: 0;
+      padding-top: 10px;
+      color: #333;
+    }
+    /* Instruction Section at the Top */
+    .instruction-section {
+      background: #fff;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .instruction-section p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .instruction-section ol {
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 10px 0 10px 20px;
+    }
+    /* Main container uses Flexbox for canvas and control panel */
+    .main-container {
+      display: flex;
+      max-width: 1000px;
+      margin: 20px auto;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    /* Canvas container */
+    #canvasContainer {
+      position: relative;
+    }
+    canvas {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: crosshair;
+    }
+    /* Control Panel */
+    .control-panel {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      min-width: 180px;
+      max-width: 200px;
+      text-align: left;
+    }
+    .control-panel h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .control-panel label {
+      font-size: 16px;
+      display: block;
+      margin-top: 10px;
+    }
+    .control-panel select,
+    .control-panel button {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .control-panel button {
+      background: #3498db;
+      color: white;
+      border: none;
+    }
+    .control-panel button:hover {
+      background: #2980b9;
+    }
+    /* Message and Bottom Section */
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .bottom-section {
+      margin-top: 30px;
+      display: none;
+      text-align: center;
+    }
+    .bottom-section .explanation {
+      font-size: 18px;
+      line-height: 1.6;
+      text-align: left;
+      max-width: 700px;
+      margin: 0 auto 15px auto;
+    }
+    .bottom-section .explanation ol {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+    .bottom-section .explanation li {
+      margin-bottom: 8px;
+    }
+    .bottom-section img {
+      max-width: 500px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .bottom-section a {
+      font-weight: bold;
+      text-decoration: none;
+      color: #3498db;
+      font-size: 18px;
+    }
+    .bottom-section a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Home Button -->
+  <div id="header">
+    <a id="homeButton" href="index.html">Home</a>
+    <h1>ECC Coloring Challenge</h1>
+  </div>
 
-    <p>ECC is a encryption based on the elliptic curve theory. Uses the mathematical process to merge two distinct keys. 
-They then use the output to encrypt and decrypt data. One key is public and known to anyone, and the other is private and known only to the sender and receiver of the data.</p>
-
-    <h2>The Basics </h2>
-    <ol> 
-      <li>ECC uses an equation that looks like: y² = x³ + ax + b</li>
-      <li>Pick a Base Point (G): From all the points on the curve, we choose one special point called G (the "generator point").</li>
-      <li>Choose a secret number — this is your private key. It’s just a big number only you know.</li>
-      <li>Multiply the generator point G by your secret number using ECC (repeated addition on the curve). Public Key = Private Key × G</li>
-      <li>Get your public key, uses it to turn your message into a point on the curve (M).</li>
-      <li>Picks a new secret number k. Compute C1 = k × G and compute C2 = M + k × (Your Public Key) 
-C1 and C2 are the encrypted pieces.</li>
-      <li>To decrypt: Use your private key to compute: Shared secret = Private Key × C1, subtract the shared secret from C2 to get the original message point: M = C2 - (Private Key × C1)
-
-Then you decode the message point back into readable text.</li>
+  <!-- Instruction Section at the Top -->
+  <div class="instruction-section">
+    <p>
+      In this challenge, you must connect pairs of colored dots. 
+      Each pair has the same color: <strong>Red, Green, Blue, Pink, and Black</strong>.
+    </p>
+    <p>
+      <strong>Instructions:</strong>
+    </p>
+    <ol>
+      <li>Select the matching color from the dropdown on the right.</li>
+      <li>Use your mouse to draw a single freehand line between the two dots of that color.</li>
+      <li>If you make a mistake, use the eraser or clear the canvas to start over.</li>
+      <li>Once you connect all five pairs with lines of the correct color, click "Check Lines".</li>
     </ol>
+    <p>
+      Good luck! Pay attention to accuracy, just like you would in ECC arithmetic.
+    </p>
+  </div>
 
-    <h1>Type in ECC Demo</h1>
+  <!-- Main Container: Canvas and Control Panel -->
+  <div class="main-container">
+    <!-- Canvas Container (Left) -->
+    <div id="canvasContainer">
+      <canvas id="myCanvas" width="600" height="400"></canvas>
+    </div>
+    <!-- Control Panel (Right) -->
+    <div class="control-panel">
+      <h3>Tools</h3>
+      <label for="colorSelect">Color:</label>
+      <select id="colorSelect">
+        <option value="red">Red</option>
+        <option value="green">Green</option>
+        <option value="blue">Blue</option>
+        <option value="pink">Pink</option>
+        <option value="black">Black</option>
+      </select>
+      <button id="eraserBtn">Eraser</button>
+      <button id="clearBtn">Clear All</button>
+      <button id="checkBtn">Check Lines</button>
+    </div>
+  </div>
 
-<p>Type the text below</p>
+  <!-- Message Display -->
+  <div id="message"></div>
 
-<h2>Elliptic Curve Cryptography (ECC) Educational Demo</h2>
+  <!-- Bottom Section Revealed Upon Success -->
+  <div id="bottomContent" class="bottom-section">
+    <div class="explanation">
+      <strong>Step-by-Step Explanation:</strong>
+      <ol>
+        <li><strong>Why This Example?</strong> ECC (Elliptic Curve Cryptography) requires precise operations on elliptic curve points. Here, connecting pairs of colored dots is like carefully matching each part of an ECC operation.</li>
+        <li><strong>Relation to ECC:</strong> Just as connecting mismatched dots (or using the wrong color) fails the challenge, a small error in ECC point addition can break the security of the entire system.</li>
+        <li><strong>C++ Implementation:</strong> Interactive cryptographic examples can also be built in C++ for higher performance. The same caution about small errors applies whether in JavaScript or in a lower-level language.</li>
+      </ol>
+    </div>
+    <!-- Placeholder Image (Slightly Larger) -->
+    <img src="img/eccpic.png" alt="ECC Documentation Placeholder Image">
+    <!-- Bold Link Below the Image -->
+    <p style="margin-top: 10px;">
+      <a href="https://en.wikipedia.org/wiki/Elliptic-curve_cryptography" target="_blank">
+        For more information about ECC, click here
+      </a>
+    </p>
+  </div>
 
-<label for="message">Type your message:</label><br>
-<input type="text" id="message" placeholder="Enter message" style="width: 300px;"><br><br>
+  <script>
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
 
-<button onclick="simulateECC()">Encrypt</button>
+    // We'll define five pairs of colored dots:
+    // Each pair has color, x1, y1, x2, y2
+    const dotPairs = [
+      { color: "red",   x1: 80,  y1: 80,  x2: 500, y2: 60  },
+      { color: "green", x1: 100, y1: 200, x2: 490, y2: 220 },
+      { color: "blue",  x1: 100, y1: 310, x2: 500, y2: 290 },
+      { color: "pink",  x1: 80,  y1: 150, x2: 520, y2: 350 },
+      { color: "black", x1: 300, y1: 70,  x2: 300, y2: 370 }
+    ];
+    
+    // Global drawing variables
+    let isDrawing = false;
+    let currentStroke = [];
+    let strokes = []; // Array of objects: { points: [...], color: "red"/... }
+    let currentColor = "red"; // Default color
+    const backgroundColor = "#ffffff";
 
-<div id="output" style="margin-top:20px; padding: 10px; border: 1px solid #ccc;"></div>
+    // Control panel elements
+    const colorSelect = document.getElementById("colorSelect");
+    const eraserBtn = document.getElementById("eraserBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    const messageDiv = document.getElementById("message");
+    const bottomContent = document.getElementById("bottomContent");
 
-<script>
-function simulateECC() {
-    const message = document.getElementById("message").value;
-    if (!message) {
-        alert("Please type a message.");
-        return;
+    // Distance function for checking near a dot
+    function dist(ax, ay, bx, by) {
+      return Math.hypot(ax - bx, ay - by);
     }
 
-    // Step 1: Create a private key (random small number for demo)
-    const privateKey = Math.floor(Math.random() * 10) + 1;
+    // Mouse position relative to canvas
+    function getMousePos(canvas, evt) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
 
-    // Step 2: Generator point (just a pair of small numbers for demo)
-    const G = { x: 5, y: 1 };
+    // Canvas events
+    canvas.addEventListener("mousedown", (e) => {
+      isDrawing = true;
+      currentStroke = [];
+      currentStroke.push(getMousePos(canvas, e));
+    });
+    canvas.addEventListener("mousemove", (e) => {
+      if (!isDrawing) return;
+      currentStroke.push(getMousePos(canvas, e));
+      drawScene();
+    });
+    canvas.addEventListener("mouseup", () => {
+      if (isDrawing && currentStroke.length > 0) {
+        strokes.push({ points: currentStroke, color: currentColor });
+      }
+      isDrawing = false;
+      drawScene();
+    });
 
-    // Step 3: Public key = privateKey * G (simplified)
-    const publicKey = {
-        x: G.x * privateKey,
-        y: G.y * privateKey
-    };
+    // Choose color from dropdown
+    colorSelect.addEventListener("change", () => {
+      currentColor = colorSelect.value;
+    });
 
-    // Step 4: Pick a random "k" for this encryption
-    const k = Math.floor(Math.random() * 10) + 1;
+    // Eraser sets color to background
+    eraserBtn.addEventListener("click", () => {
+      currentColor = backgroundColor;
+      colorSelect.value = "";
+    });
 
-    // Step 5: Encrypt the message (simplified)
-    const C1 = { x: G.x * k, y: G.y * k };
-    const sharedSecret = { x: publicKey.x * k, y: publicKey.y * k };
+    // Clear button
+    clearBtn.addEventListener("click", () => {
+      strokes = [];
+      drawScene();
+      messageDiv.textContent = "";
+      bottomContent.style.display = "none";
+    });
 
-    // Fake "encryption": shift each character by sharedSecret.x
-    const encrypted = message.split('').map(char =>
-        String.fromCharCode(char.charCodeAt(0) + sharedSecret.x)
-    ).join('');
+    // Check button: ensure each pair of dots has a stroke in the correct color
+    // that starts near one dot and ends near the other (or vice versa).
+    checkBtn.addEventListener("click", () => {
+      let allPairsConnected = true;
+      const threshold = 20; // how close must the stroke endpoints be to the dots
 
-    document.getElementById("output").innerHTML = `
-        <strong>Private Key:</strong> ${privateKey}<br>
-        <strong>Public Key:</strong> (${publicKey.x}, ${publicKey.y})<br>
-        <strong>Random k:</strong> ${k}<br>
-        <strong>C1 (k × G):</strong> (${C1.x}, ${C1.y})<br>
-        <strong>Shared Secret:</strong> (${sharedSecret.x}, ${sharedSecret.y})<br><br>
-        <strong>Encrypted Message:</strong> ${encrypted}
-    `;
-}
-</script>
+      dotPairs.forEach(pair => {
+        // Find if there's a stroke of pair.color that connects (x1,y1) to (x2,y2)
+        const connected = strokes.some(stroke => {
+          if (stroke.color.toLowerCase() !== pair.color.toLowerCase()) return false;
 
-    <center><a href="https://www.techtarget.com/searchsecurity/definition/elliptical-curve-cryptography">Click here for more info </a></center>
-  </body>
+          const first = stroke.points[0];
+          const last = stroke.points[stroke.points.length - 1];
 
+          // Check distance from stroke's first point to dot1 and from stroke's last point to dot2
+          // OR first->dot2 and last->dot1
+          let firstNearDot1 = (dist(first.x, first.y, pair.x1, pair.y1) < threshold);
+          let lastNearDot2 = (dist(last.x, last.y, pair.x2, pair.y2) < threshold);
+
+          let firstNearDot2 = (dist(first.x, first.y, pair.x2, pair.y2) < threshold);
+          let lastNearDot1 = (dist(last.x, last.y, pair.x1, pair.y1) < threshold);
+
+          return (firstNearDot1 && lastNearDot2) || (firstNearDot2 && lastNearDot1);
+        });
+
+        if (!connected) {
+          allPairsConnected = false;
+        }
+      });
+
+      if (allPairsConnected) {
+        messageDiv.style.color = "green";
+        messageDiv.textContent = "Congratulations! You connected all dots with the correct colors.";
+        bottomContent.style.display = "block";
+        bottomContent.scrollIntoView({ behavior: "smooth" });
+      } else {
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "Some pairs were missed or connected with the wrong color. Try again!";
+      }
+    });
+
+    // Draw everything
+    function drawScene() {
+      ctx.fillStyle = backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the five pairs of dots
+      drawDotPairs();
+
+      // Draw existing strokes
+      strokes.forEach(stroke => {
+        drawStroke(stroke.points, stroke.color);
+      });
+
+      // Draw current stroke (if any)
+      if (isDrawing && currentStroke.length > 0) {
+        drawStroke(currentStroke, currentColor);
+      }
+    }
+
+    // Draw each pair of dots
+    function drawDotPairs() {
+      dotPairs.forEach(pair => {
+        // Dot #1
+        drawDot(pair.x1, pair.y1, pair.color);
+        // Dot #2
+        drawDot(pair.x2, pair.y2, pair.color);
+      });
+    }
+
+    // Draw a single dot
+    function drawDot(x, y, color) {
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Draw a stroke (array of points) in a given color
+    function drawStroke(points, color) {
+      if (points.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.stroke();
+      ctx.closePath();
+    }
+
+    // Initial scene draw
+    drawScene();
+  </script>
+</body>
 </html>

@@ -1,67 +1,214 @@
-<html>
-  <body bgcolor="CadetBlue">
-    <center><a href="index.html">Home </a></center>
-    <center><h1>S-Box substitution</h1></center>
-    <br>    
-
-    <p>It's a substitution table used to do nonlinear substitutions in the course of encryption.
-Each byte of the input is substituted for another byte according to a fixed table which strengthens the confusion and diffusion properties of the encryption.
-</p>
-
-    <h2>The Basics </h2>
-    <ol> 
-      <li>Make plaintext and create the key schedule.</li>
-      <li>The plaintext is split into 32-bit words. Split the data into a left half and a right half. This helps the algorithm mix the message in a secure way.</li>
-      <li>Serpent performs 32 rounds of transformations to scramble the message securely.</li>
-      <li>In each round, first mix the message with a round key.The message bits are combined with the round key using a method called XOR, which flips some of the bits depending on the key. </li>
-      <li>S-box transformation. This step substitutes small groups of bits with different bits using a kind of table called an S-box. Each round uses a different S-box to keep things unpredictable.</li>
-      <li>Rearrange the bits using a linear transformation. This step mixes up the positions of the bits to spread the effect of each bit across more of the message</li>
-      <li>After 32 rounds, apply one last XOR with the final round key. This final key mixing locks the scrambled data in place.</li>
-    </ol>
-
-    <h1>Type in S-box substitution message Demo</h1>
-
-<p>Type the text below</p>
-
-<div style="font-family: Arial; padding: 20px; max-width: 600px; margin: auto;">
-  <h2>Serpent S-Box Transformation Demo</h2>
-  <p>Type your message to see how it gets transformed over multiple rounds using simplified S-box logic.</p>
-
-  <input id="inputMessage" type="text" placeholder="Enter your message" style="width: 100%; padding: 10px;" />
-  <button onclick="runSerpent()" style="margin-top: 10px; padding: 10px 20px;">Encrypt</button>
-
-  <div id="output" style="margin-top: 20px; white-space: pre-wrap; background: #f9f9f9; padding: 15px; border: 1px solid #ccc;"></div>
-</div>
-
-<script>
-  // Simplified S-box (4-bit substitution table)
-  const sBox = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8,
-                0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7];
-
-  function applySBoxToByte(byte) {
-    // Split byte into high and low 4 bits
-    const high = (byte >> 4) & 0x0F;
-    const low = byte & 0x0F;
-    const transformed = (sBox[high] << 4) | sBox[low];
-    return transformed;
-  }
-
-  function runSerpent() {
-    const message = document.getElementById("inputMessage").value;
-    let output = `🔤 Original Message: "${message}"\n\n`;
-
-    // Convert message to bytes
-    let bytes = Array.from(message).map(char => char.charCodeAt(0));
-
-    for (let round = 1; round <= 4; round++) {
-      bytes = bytes.map(applySBoxToByte);
-      output += `🔁 Round ${round}: ${bytes.map(b => b.toString(16).padStart(2, '0')).join(" ")}\n`;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Serpent S-Box Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+      margin: 0;
     }
+    /* Header style with the Home button */
+    #header {
+      position: relative;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    #homeButton {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    h1 {
+      margin: 0;
+      padding-top: 10px;
+      color: #333;
+    }
+    .section {
+      background: #fff;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .section h2 {
+      margin-top: 0;
+    }
+    .input-group {
+      margin-top: 15px;
+    }
+    input[type="number"] {
+      width: 60px;
+      padding: 5px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    #result, #calcResult {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .bottom-section {
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+    }
+    .bottom-section img {
+      max-width: 500px; /* Slightly bigger image */
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    /* Larger font and line spacing for the explanation */
+    .explanation {
+      font-size: 18px;
+      line-height: 1.6;
+      text-align: left;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .explanation ol {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+    .explanation li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Home button -->
+  <div id="header">
+    <a id="homeButton" href="index.html">Home</a>
+    <h1>Serpent S-Box Challenge</h1>
+  </div>
 
-    output += `\n🔐 Final (hex): ${bytes.map(b => b.toString(16).padStart(2, '0')).join("")}`;
-    document.getElementById("output").innerText = output;
-  }
-</script>
-  </body>
+  <!-- 1) Try It Yourself Section on Top -->
+  <div class="section">
+    <h2>Try It Yourself!</h2>
+    <p>Enter any nibble (0–15) to see its S-box output:</p>
+    <div class="input-group">
+      <input type="number" id="calcInput" min="0" max="15" value="0">
+      <button id="computeBtn">Compute S-box Output</button>
+    </div>
+    <div id="calcResult"></div>
+  </div>
 
+  <!-- 2) Puzzle Section on the Bottom -->
+  <div class="section">
+    <h2>Guess the S-Box Output</h2>
+    <p>
+      We’ve generated a random input nibble. Figure out the correct S-box output and enter it below.
+    </p>
+    <p><strong>Secret S-box mapping:</strong> [3, 8, 14, 4, 1, 7, 12, 10, 6, 2, 15, 13, 0, 9, 11, 5]</p>
+    <p><strong>Question:</strong> For input nibble <span id="inputN"></span>, what is the S-box output?</p>
+    <div class="input-group">
+      <input type="number" id="answerInput" min="0" max="15">
+      <button id="checkBtn">Check Answer</button>
+    </div>
+    <div id="result"></div>
+  </div>
+
+  <!-- Bottom Content Revealed Upon Correct Answer -->
+  <div id="bottomContent" class="bottom-section">
+    <!-- Explanation above the image, broken down into steps -->
+    <div class="explanation">
+      <strong>Code Explanation:</strong>
+      <ol>
+        <li>
+          <strong>Mapping:</strong> The Serpent cipher uses a set of S-boxes that transform a 4-bit input (nibble) into another 4-bit output.
+        </li>
+        <li>
+          <strong>Implementation:</strong> We store these outputs in an array and use a random number between 0 and 15 as our input.
+          The user is challenged to compute the correct S-box result.
+        </li>
+        <li>
+          <strong>C++ Adaptation:</strong> The same technique can be used in a C++ program when performance is critical.
+          C++ gives low-level control over memory and optimization for cryptographic implementations.
+        </li>
+      </ol>
+    </div>
+    <!-- The bigger image -->
+    <img src="img/serpantdoc.png" alt="Serpent S-box Placeholder Image">
+    <!-- Bolded link below the image -->
+    <p style="margin-top: 10px;">
+      <a href="https://en.wikipedia.org/wiki/ChaCha20" target="_blank" style="font-weight: bold;">
+        For more information about ChaCha20, click here
+      </a>
+    </p>
+  </div>
+
+  <script>
+    // Our secret S-box mapping for nibbles 0..15:
+    const sBox = [3, 8, 14, 4, 1, 7, 12, 10, 6, 2, 15, 13, 0, 9, 11, 5];
+
+    // 1) "Try It Yourself" logic:
+    const calcInput = document.getElementById("calcInput");
+    const computeBtn = document.getElementById("computeBtn");
+    const calcResult = document.getElementById("calcResult");
+
+    computeBtn.addEventListener("click", () => {
+      let val = parseInt(calcInput.value, 10);
+      if (isNaN(val) || val < 0 || val > 15) {
+        calcResult.style.color = "red";
+        calcResult.textContent = "Please enter a valid number between 0 and 15.";
+      } else {
+        calcResult.style.color = "black";
+        calcResult.textContent = "S-box output: " + sBox[val];
+      }
+    });
+
+    // 2) Puzzle logic:
+    // Generate a random input nibble:
+    let puzzleInput = Math.floor(Math.random() * 16);
+    document.getElementById("inputN").textContent = puzzleInput;
+
+    // The correct output for the puzzle nibble:
+    const correctOutput = sBox[puzzleInput];
+
+    const answerInput = document.getElementById("answerInput");
+    const checkBtn = document.getElementById("checkBtn");
+    const resultDiv = document.getElementById("result");
+    const bottomContent = document.getElementById("bottomContent");
+
+    checkBtn.addEventListener("click", () => {
+      let userAnswer = parseInt(answerInput.value, 10);
+      if (isNaN(userAnswer) || userAnswer < 0 || userAnswer > 15) {
+        resultDiv.style.color = "red";
+        resultDiv.textContent = "Please enter a valid number between 0 and 15.";
+      } else {
+        if (userAnswer === correctOutput) {
+          resultDiv.style.color = "green";
+          resultDiv.textContent = "Correct!";
+          // Reveal bottom content and auto-scroll down to it
+          bottomContent.style.display = "block";
+          bottomContent.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          resultDiv.style.color = "red";
+          resultDiv.textContent = "Incorrect. Try again!";
+        }
+      }
+    });
+  </script>
+</body>
 </html>

@@ -82,6 +82,60 @@
     .explanation strong {
       color: #333;
     }
+
+    /* Calculator container: 
+       We'll show it side-by-side on wider screens, stacked on narrower. */
+    .calculator-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* The puzzle and the calculator each in their own "section-like" box */
+    .calc-section {
+      background: #fff;
+      flex: 1 1 300px;
+      min-width: 280px;
+      max-width: 600px;
+      margin: 10px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .calc-section h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .calc-section label {
+      display: inline-block;
+      width: 20px;
+      text-align: right;
+      margin-right: 5px;
+    }
+    .calc-section input {
+      width: 60px;
+      padding: 5px;
+      font-size: 14px;
+      margin: 10px 5px 10px 0;
+    }
+    .calc-section button {
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    #calcResult {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
@@ -91,29 +145,71 @@
     <h1>ChaCha20 Quarter Round Challenge</h1>
   </div>
 
+  <!-- Explanation in simpler terms -->
   <div class="section">
-    <p>
-      Below is a simplified puzzle simulating one ChaCha20 quarter-round operation.
+    <h2>Understanding the Quarter-Round</h2>
+    <p style="text-align: left; margin: 0 auto; max-width: 600px;">
+      In ChaCha20, a <strong>quarter-round</strong> operates on four 32-bit values, commonly labeled
+      <code>a</code>, <code>b</code>, <code>c</code>, and <code>d</code>. It does the following steps (all math is mod 2<sup>32</sup>):
     </p>
-    <p>
-      Our <strong>initial state</strong> (in decimal) is:
+    <ol style="text-align: left; margin: 15px auto; max-width: 600px;">
+      <li>Add <code>a</code> and <code>b</code>, store the result in <code>a</code>. Then XOR <code>d</code> with <code>a</code>, and rotate <code>d</code> left by 16 bits.</li>
+      <li>Add <code>c</code> and <code>d</code>, store the result in <code>c</code>. Then XOR <code>b</code> with <code>c</code>, and rotate <code>b</code> left by 12 bits.</li>
+      <li>Add <code>a</code> and <code>b</code> again, store in <code>a</code>. XOR <code>d</code> with <code>a</code>, then rotate <code>d</code> left by 8 bits.</li>
+      <li>Add <code>c</code> and <code>d</code>, store in <code>c</code>. XOR <code>b</code> with <code>c</code>, then rotate <code>b</code> left by 7 bits.</li>
+    </ol>
+    <p style="text-align: left; margin: 0 auto; max-width: 600px;">
+      These simple steps of <em>add, XOR, and rotate</em> are repeated multiple times across different words to produce a secure keystream.
+      But below, you’ll see just one quarter-round and how it transforms <code>a, b, c, d</code>.
     </p>
-    <p><strong>a = 1, b = 2, c = 3, d = 4</strong></p>
-    <p>
-      The ChaCha20 quarter-round uses a sequence of
-      <strong>add, XOR, and rotate</strong> steps on 32-bit words. 
-      After applying <em>one</em> quarter-round, which final state is correct?
-    </p>
+  </div>
 
-    <div class="choices">
-      <!-- We'll dynamically fill these buttons in JS -->
-      <button class="choice-btn" data-index="0"></button>
-      <button class="choice-btn" data-index="1"></button>
-      <button class="choice-btn" data-index="2"></button>
-      <button class="choice-btn" data-index="3"></button>
+  <!-- Display the puzzle and the calculator side by side -->
+  <div class="calculator-container">
+    <!-- Puzzle Section -->
+    <div class="calc-section">
+      <h2>Puzzle: Which Final State is Correct?</h2>
+      <p>
+        Our <strong>initial state</strong> (in decimal) is:
+      </p>
+      <p><strong>a = 1, b = 2, c = 3, d = 4</strong></p>
+      <p>
+        After applying <em>one</em> quarter-round, which final state is correct?
+      </p>
+      <div class="choices">
+        <!-- We'll dynamically fill these buttons in JS -->
+        <button class="choice-btn" data-index="0"></button>
+        <button class="choice-btn" data-index="1"></button>
+        <button class="choice-btn" data-index="2"></button>
+        <button class="choice-btn" data-index="3"></button>
+      </div>
+      <div id="result"></div>
     </div>
 
-    <div id="result"></div>
+    <!-- Calculator Section -->
+    <div class="calc-section">
+      <h2>Try It Yourself!</h2>
+      <p>
+        Enter your own values for <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code> and click
+        <em>“Compute”</em> to see how one quarter-round transforms them.
+      </p>
+      <div>
+        <label for="calcA">a:</label>
+        <input type="number" id="calcA" value="1" />
+        <label for="calcB">b:</label>
+        <input type="number" id="calcB" value="2" />
+      </div>
+      <div>
+        <label for="calcC">c:</label>
+        <input type="number" id="calcC" value="3" />
+        <label for="calcD">d:</label>
+        <input type="number" id="calcD" value="4" />
+      </div>
+      <button id="computeButton">Compute Quarter-Round</button>
+      <div id="calcResult"></div>
+      <!-- Image container inserted below the calculator, to be revealed on correct answer -->
+      <div id="codeImageContainer"></div>
+    </div>
   </div>
 
   <script>
@@ -127,24 +223,18 @@
     }
 
     function quarterRound(a, b, c, d) {
-      // All math is mod 2^32, so use >>> 0 to keep them in 32-bit space.
-      // Step 1:
+      // Keep all arithmetic in 32-bit space with >>> 0
       a = (a + b) >>> 0; d ^= a; d = rotateLeft(d, 16);
-      // Step 2:
       c = (c + d) >>> 0; b ^= c; b = rotateLeft(b, 12);
-      // Step 3:
       a = (a + b) >>> 0; d ^= a; d = rotateLeft(d, 8);
-      // Step 4:
       c = (c + d) >>> 0; b ^= c; b = rotateLeft(b, 7);
-
       return [a >>> 0, b >>> 0, c >>> 0, d >>> 0];
     }
 
-    // 1) Compute the "true" final state for (a,b,c,d) = (1,2,3,4)
+    // 1) Compute the "true" final state for (a,b,c,d) = (1,2,3,4) for the puzzle.
     const finalState = quarterRound(1,2,3,4);
 
-    // We'll create four possible states (including the correct one).
-    // Adjust decoys as desired.
+    // 2) Possible states (including the correct one).
     const possibleAnswers = [
       finalState,               // correct
       [12, 77, 300, 1000],
@@ -152,7 +242,7 @@
       [1234, 2345, 3456, 4567],
     ];
 
-    // Shuffle them so the correct one isn't always first.
+    // 3) Shuffle them so the correct one isn't always first.
     function shuffleArray(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -162,20 +252,24 @@
     }
     shuffleArray(possibleAnswers);
 
-    // Display states on the buttons
+    // 4) Display states on the puzzle buttons
     const choiceButtons = document.querySelectorAll(".choice-btn");
     choiceButtons.forEach((btn, idx) => {
       const stateArr = possibleAnswers[idx];
       btn.textContent = `(${stateArr[0]}, ${stateArr[1]}, ${stateArr[2]}, ${stateArr[3]})`;
     });
 
-    // Compare chosen to finalState
+    // 5) Compare chosen to finalState
     const resultDiv = document.getElementById("result");
     choiceButtons.forEach((btn, idx) => {
       btn.addEventListener("click", () => {
         const chosen = possibleAnswers[idx];
-        if (chosen[0]===finalState[0] && chosen[1]===finalState[1] &&
-            chosen[2]===finalState[2] && chosen[3]===finalState[3]) {
+        if (
+          chosen[0] === finalState[0] &&
+          chosen[1] === finalState[1] &&
+          chosen[2] === finalState[2] &&
+          chosen[3] === finalState[3]
+        ) {
           // Correct
           resultDiv.innerHTML = `
             <span style="color: green;">Correct!</span>
@@ -183,31 +277,53 @@
             <div class="explanation">
               <strong>How did we get there?</strong>
               <br><br>
-              A single quarter-round on <code>a=1, b=2, c=3, d=4</code> works as follows:
+              A single quarter-round on <code>a=1, b=2, c=3, d=4</code>:
               <ol>
-                <li><code>a = a + b</code>, <code>d ^= a</code>, rotate <code>d</code> by 16 bits.</li>
-                <li><code>c = c + d</code>, <code>b ^= c</code>, rotate <code>b</code> by 12 bits.</li>
-                <li><code>a = a + b</code>, <code>d ^= a</code>, rotate <code>d</code> by 8 bits.</li>
-                <li><code>c = c + d</code>, <code>b ^= c</code>, rotate <code>b</code> by 7 bits.</li>
+                <li><code>a = a + b</code>, then <code>d ^= a</code>, rotate <code>d</code> by 16 bits.</li>
+                <li><code>c = c + d</code>, then <code>b ^= c</code>, rotate <code>b</code> by 12 bits.</li>
+                <li><code>a = a + b</code>, then <code>d ^= a</code>, rotate <code>d</code> by 8 bits.</li>
+                <li><code>c = c + d</code>, then <code>b ^= c</code>, rotate <code>b</code> by 7 bits.</li>
               </ol>
-              These add, XOR, and rotate operations significantly scramble the four 32-bit words.
-              <br><br>
               The final result is
               <strong>(${finalState[0]}, ${finalState[1]}, ${finalState[2]}, ${finalState[3]})</strong>.
-              <br><br>
-              ChaCha20 repeats this quarter-round mixing many times over multiple blocks to ensure security.
               <br><br>
               <a href="https://www.tutorialspoint.com/cryptography/cryptography_chacha20_encryption_algorithm.htm" target="_blank">
                 Click here for more information about ChaCha20
               </a>
             </div>
           `;
+
+          // Reveal the code image under the calculator.
+          document.getElementById("codeImageContainer").innerHTML = `
+            <img 
+              src="img/chachacode.png" 
+              alt="img/chachacode.png" 
+              style="max-width:100%; margin-top: 10px;" 
+            />
+          `;
+
           resultDiv.scrollIntoView({ behavior: 'smooth' });
         } else {
           // Incorrect
           resultDiv.innerHTML = `<span style="color: red;">Incorrect.</span> Try again!`;
         }
       });
+    });
+
+    // 6) Calculator: Let users input custom a, b, c, d
+    document.getElementById('computeButton').addEventListener('click', function() {
+      // Get user inputs
+      const aVal = parseInt(document.getElementById('calcA').value) || 0;
+      const bVal = parseInt(document.getElementById('calcB').value) || 0;
+      const cVal = parseInt(document.getElementById('calcC').value) || 0;
+      const dVal = parseInt(document.getElementById('calcD').value) || 0;
+
+      // Run quarter-round
+      const [newA, newB, newC, newD] = quarterRound(aVal, bVal, cVal, dVal);
+
+      // Display the result
+      document.getElementById('calcResult').textContent =
+        `Final state: (${newA}, ${newB}, ${newC}, ${newD})`;
     });
   </script>
 </body>
